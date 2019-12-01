@@ -16,7 +16,7 @@ int main(void)
         led_switch(LED0, ON);
         delay(100);
         led_switch(LED0, OFF);
-        delay(500);
+        delay(100);
     }  
     return 0;
 }

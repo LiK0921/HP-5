@@ -142,10 +142,9 @@ Disassembly of section .text.startup:
 87800138:	2100      	movs	r1, #0
 8780013a:	4608      	mov	r0, r1
 8780013c:	f7ff ffba 	bl	878000b4 <led_switch>
-87800140:	f44f 70fa 	mov.w	r0, #500	; 0x1f4
-87800144:	f7ff ffd2 	bl	878000ec <delay>
-87800148:	e7ef      	b.n	8780012a <main+0xa>
-8780014a:	bf00      	nop
+87800140:	2064      	movs	r0, #100	; 0x64
+87800142:	f7ff ffd3 	bl	878000ec <delay>
+87800146:	e7f0      	b.n	8780012a <main+0xa>
 
 Disassembly of section .comment:
 
