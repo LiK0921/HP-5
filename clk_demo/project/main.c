@@ -36,7 +36,7 @@ int main(void)
             }
         }
         i++;
-        if (i == 50)
+        if (i == 20)
         {
             i = 0;
             led_state = !led_state;
