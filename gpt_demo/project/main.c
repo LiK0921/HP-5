@@ -7,6 +7,7 @@
 #include "bsp_exit.h"
 #include "bsp_int.h"
 #include "bsp_epit.h"
+#include "bsp_gpt.h"
 int main(void) 
 {
     u8 state = OFF;
@@ -23,12 +24,15 @@ int main(void)
     //按键中断初始化
     exit_init();
     epit1_init(0, 66000000 / 100);//1秒分成100份，就是10ms溢出	
-  
+
+    gpt_delay_init();//高精度延时
+
     while (1)
     {     
-		  delay(100); 
-      state = !state;
-      led_switch(LED0, state);  
+        //state = !state;
+        //led_switch(LED0, state);  
+        //gpt_delay_ms(500);
+        
     }  
     return 0;
 }
