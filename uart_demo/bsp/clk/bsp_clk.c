@@ -93,4 +93,11 @@ void im6ull_clk_init(void)
 	//设置PERCLK_CLK_ROOT时钟
 	CCM->CSCMR1 &= ~(1 << 6);	/* PERCLK_CLK_ROOT时钟源为IPG */
 	CCM->CSCMR1 &= ~(7 << 0);	/* PERCLK_PODF位清零，即1分频 */
+
+
+	//配置串口的时钟
+	CCM->CSCDR1 &= ~(1 << 6);//80MHz
+
+	CCM->CSCDR1 &= ~(0x3F);//1分频
+
 }

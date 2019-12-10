@@ -30,12 +30,12 @@ int main(void)
     uart_init(UART1, 115200);
     while (1)
     {
-        my_puts(UART1, "Please input a char : ");
+        my_puts(UART1, "Please Input A Char : ");
         c = my_getc(UART1);
         //my_putc(UART1, c);
         my_puts(UART1, "\r\n");
 
-        my_puts(UART1, "Your input is : ");
+        my_puts(UART1, "Your Input Is : ");
         my_putc(UART1, c);
         my_puts(UART1, "\r\n");
     }
