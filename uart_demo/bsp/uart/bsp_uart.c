@@ -40,12 +40,16 @@ void uart_init(UART_Type * base, u32 broud)
     * = 115200
     */
 
+#if 0
     //配置波特率为115200
     base->UFCR &= ~(7 << 7);
     base->UFCR |= (5 << 7);
    
     base->UBIR = 71;
     base->UBMR = 3124;
+#endif // 0
+
+    uart_setbaudrate(UART1, 115200, 80000000);
 
     uart_enable(UART1);
 
@@ -89,23 +93,156 @@ void uart_soft_reset(UART_Type * base)
     while (((base->UCR2 >> 0) & 0x1) == 0);
 }
 
-void my_putc(UART_Type * base, char c)
+/*void my_putc(UART_Type * base, char c)
 {
-    while(((base->USR2 >> 3) &0X01) == 0);/* 等待上一次发送完成 */
-	base->UTXD = c & 0XFF; 				/* 发送数据 */
+    while(((base->USR2 >> 3) &0X01) == 0);// 等待上一次发送完成 
+	base->UTXD = c & 0XFF; 				// 发送数据 
+}*/
+void putc(u8 c)
+{
+    while(((UART1->USR2 >> 3) &0X01) == 0);/* 等待上一次发送完成 */
+	UART1->UTXD = c & 0XFF; 				/* 发送数据 */
 }
-void my_puts(UART_Type * base, char * str)
+
+/*u8 my_getc(UART_Type * base)
+{
+    while(((base->USR2 >> 0) & 0x01) == 0);// 等待接收完成
+	return base->URXD;				// 返回接收到的数据
+}*/
+u8 getc()
+{
+    while(((UART1->USR2 >> 0) & 0x01) == 0);/* 等待接收完成 */
+	return UART1->URXD;				/* 返回接收到的数据 */
+}
+
+void puts(char * str)
+{
+    char * p = str;
+    while (*p)
+    {
+        putc(*p++);
+    }
+}
+
+/*void my_puts(UART_Type * base, char * str)
 {
     char * p = str;
     while (*p)
     {
         my_putc(base, *p++);
     }
-}
-u8 my_getc(UART_Type * base)
+}*/
+
+
+
+/*
+ * @description 		: 波特率计算公式，
+ *    			  	  	  可以用此函数计算出指定串口对应的UFCR，
+ * 				          UBIR和UBMR这三个寄存器的值
+ * @param - base		: 要计算的串口。
+ * @param - baudrate	: 要使用的波特率。
+ * @param - srcclock_hz	:串口时钟源频率，单位Hz
+ * @return		: 无
+ */
+void uart_setbaudrate(UART_Type *base, unsigned int baudrate, unsigned int srcclock_hz)
 {
-    while(((base->USR2 >> 0) & 0x01) == 0);/* 等待接收完成 */
-	return base->URXD;				/* 返回接收到的数据 */
+    uint32_t numerator = 0u;		//分子
+    uint32_t denominator = 0U;		//分母
+    uint32_t divisor = 0U;
+    uint32_t refFreqDiv = 0U;
+    uint32_t divider = 1U;
+    uint64_t baudDiff = 0U;
+    uint64_t tempNumerator = 0U;
+    uint32_t tempDenominator = 0u;
+
+    /* get the approximately maximum divisor */
+    numerator = srcclock_hz;
+    denominator = baudrate << 4;
+    divisor = 1;
+
+    while (denominator != 0)
+    {
+        divisor = denominator;
+        denominator = numerator % denominator;
+        numerator = divisor;
+    }
+
+    numerator = srcclock_hz / divisor;
+    denominator = (baudrate << 4) / divisor;
+
+    /* numerator ranges from 1 ~ 7 * 64k */
+    /* denominator ranges from 1 ~ 64k */
+    if ((numerator > (UART_UBIR_INC_MASK * 7)) || (denominator > UART_UBIR_INC_MASK))
+    {
+        uint32_t m = (numerator - 1) / (UART_UBIR_INC_MASK * 7) + 1;
+        uint32_t n = (denominator - 1) / UART_UBIR_INC_MASK + 1;
+        uint32_t max = m > n ? m : n;
+        numerator /= max;
+        denominator /= max;
+        if (0 == numerator)
+        {
+            numerator = 1;
+        }
+        if (0 == denominator)
+        {
+            denominator = 1;
+        }
+    }
+    divider = (numerator - 1) / UART_UBIR_INC_MASK + 1;
+
+    switch (divider)
+    {
+        case 1:
+            refFreqDiv = 0x05;
+            break;
+        case 2:
+            refFreqDiv = 0x04;
+            break;
+        case 3:
+            refFreqDiv = 0x03;
+            break;
+        case 4:
+            refFreqDiv = 0x02;
+            break;
+        case 5:
+            refFreqDiv = 0x01;
+            break;
+        case 6:
+            refFreqDiv = 0x00;
+            break;
+        case 7:
+            refFreqDiv = 0x06;
+            break;
+        default:
+            refFreqDiv = 0x05;
+            break;
+    }
+    /* Compare the difference between baudRate_Bps and calculated baud rate.
+     * Baud Rate = Ref Freq / (16 * (UBMR + 1)/(UBIR+1)).
+     * baudDiff = (srcClock_Hz/divider)/( 16 * ((numerator / divider)/ denominator).
+     */
+    tempNumerator = srcclock_hz;
+    tempDenominator = (numerator << 4);
+    divisor = 1;
+    /* get the approximately maximum divisor */
+    while (tempDenominator != 0)
+    {
+        divisor = tempDenominator;
+        tempDenominator = tempNumerator % tempDenominator;
+        tempNumerator = divisor;
+    }
+    tempNumerator = srcclock_hz / divisor;
+    tempDenominator = (numerator << 4) / divisor;
+    baudDiff = (tempNumerator * denominator) / tempDenominator;
+    baudDiff = (baudDiff >= baudrate) ? (baudDiff - baudrate) : (baudrate - baudDiff);
+
+    if (baudDiff < (baudrate / 100) * 3)
+    {
+        base->UFCR &= ~UART_UFCR_RFDIV_MASK;
+        base->UFCR |= UART_UFCR_RFDIV(refFreqDiv);
+        base->UBIR = UART_UBIR_INC(denominator - 1); //要先写UBIR寄存器，然后在写UBMR寄存器，3592页 
+        base->UBMR = UART_UBMR_MOD(numerator / divider - 1);
+    }
 }
 
 //防止编译器报错
@@ -113,3 +250,4 @@ void raise(int sig_nr)
 {
 
 }
+

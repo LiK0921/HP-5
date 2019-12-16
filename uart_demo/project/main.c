@@ -8,9 +8,11 @@
 #include "bsp_int.h"
 #include "bsp_epit.h"
 #include "bsp_gpt.h"
+#include "stdio.h"
+
 int main(void) 
 {
-    u8 c;
+    s32 a, b;
     //中断初始化
     int_init();
     //芯片时钟树配置到推荐频率
@@ -30,14 +32,18 @@ int main(void)
     uart_init(UART1, 115200);
     while (1)
     {
-        my_puts(UART1, "Please Input A Char : ");
+        /*my_puts(UART1, "Please Input A Char : ");
         c = my_getc(UART1);
         //my_putc(UART1, c);
         my_puts(UART1, "\r\n");
 
         my_puts(UART1, "Your Input Is : ");
         my_putc(UART1, c);
-        my_puts(UART1, "\r\n");
+        my_puts(UART1, "\r\n");*/
+
+        printf("Please input two number :");
+		scanf("%d %d", &a, &b);					 		/* 输入两个整数 */
+		printf("%d + %d = %d\r\n", a, b, a + b);	/* 输出两个数相加的和 */    
     }
     return 0;
 }

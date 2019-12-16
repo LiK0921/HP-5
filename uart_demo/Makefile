@@ -6,6 +6,10 @@ LD 		:= $(CROSS_COMPILE)ld
 OBJCOPY := $(CROSS_COMPILE)objcopy
 OBJDUMP := $(CROSS_COMPILE)objdump
 
+#因为计算波特率使用到除法运算，要使用到数学库，所以要链接库目录
+LIBPATH := -lgcc -L /usr/local/arm/gcc-linaro-4.9.4-2017.01-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.9.4
+
+
 INCDIRS	:= 	imx6ul	\
 			bsp/clk \
 			bsp/led \
@@ -17,6 +21,7 @@ INCDIRS	:= 	imx6ul	\
 			bsp/epit\
 			bsp/gpt \
 			bsp/uart \
+			stdio/include \
 			bsp/delay
 
 SRCDIRS := 	project	\
@@ -30,6 +35,7 @@ SRCDIRS := 	project	\
 			bsp/epit\
 			bsp/gpt \
 			bsp/uart \
+			stdio/lib \
 			bsp/delay
 
 #patsubst是一个函数，搜索并替换字符串
@@ -52,21 +58,21 @@ OBJS		:= $(SOBJS)$(COBJS)
 VPATH		:= $(SRCDIRS)
 
 $(TARGET).bin : $(OBJS)
-	$(LD) -Timx6ul.lds -o $(TARGET).elf $^
+	$(LD) -Timx6ul.lds -o $(TARGET).elf $^ $(LIBPATH)
 	$(OBJCOPY) -O binary -S $(TARGET).elf $@
 	$(OBJDUMP) -D -m arm $(TARGET).elf > $(TARGET).dis
 
 
 $(SOBJS) : obj/%.o : %.s
-	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $^
+	$(CC) -Wall -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
 
 $(COBJS) : obj/%.o : %.c
-	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $^
+	$(CC) -Wall -Wa,-mimplicit-it=thumb -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
 
 .PHONY : clean
 
 clean :
-	rm -rf $(TARGET).bin $(TARGET).dis $(TARGET).elf $(OBJS)
+	rm -rf $(TARGET).bin $(TARGET).dis $(TARGET).elf $(OBJS) $(SOBJS)
 
 
 

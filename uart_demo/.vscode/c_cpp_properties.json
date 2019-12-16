@@ -15,6 +15,7 @@
                 "${workspaceFolder}/bsp/gpt",          
                 "${workspaceFolder}/imx6ul",
                 "${workspaceFolder}/bsp/exit",
+                "${workspaceFolder}/stdio/include",
                 "${workspaceFolder}/project"
             ],
             "defines": [],
