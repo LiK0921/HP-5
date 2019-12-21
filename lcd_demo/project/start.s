@@ -7,7 +7,7 @@
 
 /*****************************汇编程序从这里开始******************************************/
 _start:
-    //上电立马执行的第一条用户指令　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    //程序的最开始必须为中断向量表！位置顺序也不能打乱！　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
     ldr pc, =Rest_Handler       //复位中断
     ldr pc, =Undefined_Handler  //未定义指令中断
     ldr pc, =SVC_Handler        //SVC中断
@@ -16,6 +16,7 @@ _start:
     ldr pc, =NotUsed_Handler  //未使用
     ldr pc, =IRQ_Handler  //外部中断
     ldr pc, =FIQ_Handler  //快速中断
+    
 
 //未初始化的段          
 /******************************************************************************************
@@ -23,6 +24,7 @@ _start:
     可能被误以为是属于Rest_Handler的代码，然后灯都不闪了！
 ******************************************************************************************/
 .global _bss_start
+
 _bss_start:
     .word __bss_start
 _bss_end:
@@ -45,15 +47,15 @@ Rest_Handler:
         操作cp15协处理器
     */
     cpsid i //关闭全局中断，IRQ
-
+    //读取指令，把寄存器值读到r0中
     MRC p15, 0, r0, c1, c0, 0   /*读取SCTRL寄存器数据到r0里面 */
-
+    //清零指令
     bic r0, r0, #(1 << 12)//关闭I-Cache
     bic r0, r0, #(1 << 11)//关闭分支预测，就是赌，if语句内加载到Cache
     bic r0, r0, #(1 << 2)//关闭D-Cache
     bic r0, r0, #(1 << 1)//关闭对齐
     bic r0, r0, #(1 << 0)//关闭MMU
-
+    //写入指令
     MCR p15, 0, r0, c1, c0, 0   /*将r0的值写入SCTRL寄存器 */
 
 /*
@@ -62,7 +64,7 @@ Rest_Handler:
     ldr r0, =0x87800000
     dsb
     isb
-    MCR p15, 0, r0, c12, c0, 0
+    MCR p15, 0, r0, c12, c0, 0  //写入cp15协处理器的c12寄存器中
     dsb
     isb
 */
@@ -104,12 +106,10 @@ Undefined_Handler:
     ldr r0, =Undefined_Handler
     bx r0
 
-
 /*******************************SVC中断*****************************/
 SVC_Handler:
     ldr r0, =SVC_Handler
     bx r0
-
 
 /*******************************预取指令中断*****************************/
 PreAbort_Handler:
@@ -134,11 +134,14 @@ IRQ_Handler:
 	mrs r0, spsr				/* 读取spsr寄存器 */
 	push {r0}					/* 保存spsr寄存器 */
 
-	mrc p15, 4, r1, c15, c0, 0 /* 从CP15的C0寄存器内的值到R1寄存器中
+    //获取GIC基地址
+	mrc p15, 4, r1, c15, c0, 0 /* 从CP15的C0寄存器内的值到R1寄存器中，即GIC基地址
 								* 参考文档ARM Cortex-A(armV7)编程手册V4.0.pdf P49
 								* Cortex-A7 Technical ReferenceManua.pdf P68 P138
-								*/							
+								*/	
+    //GIC控制器的CPU接口端基地址						
 	add r1, r1, #0X2000			/* GIC基地址加0X2000，也就是GIC的CPU接口端基地址 */
+    //GICC_IAR寄存器,里面保存着发生中断的中断ID
 	ldr r0, [r1, #0XC]			/* GIC的CPU接口端基地址加0X0C就是GICC_IAR寄存器，
 								 * GICC_IAR寄存器保存这当前发生中断的中断号，我们要根据
 								 * 这个中断号来绝对调用哪个中断服务函数
@@ -148,6 +151,7 @@ IRQ_Handler:
 	cps #0x13					/* 进入SVC模式，允许其他中断再次进去 */
 	
 	push {lr}					/* 保存SVC模式的lr寄存器 */
+    //调用中断服务函数，参数是r0,就是中断ID
 	ldr r2, =sys_irqhandle	/* 加载C语言中断处理函数到r2寄存器中*/
 	blx r2						/* 运行C语言中断处理函数，带有一个参数，保存在R0寄存器中 */
 
