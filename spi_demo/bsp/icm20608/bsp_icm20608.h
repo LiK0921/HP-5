@@ -123,6 +123,5 @@ u16 icm20608_accel_scaleget(void);
 
 void icm20608_getdata(void);
 
-void imx6ul_hardfpu_enable(void);
 
 #endif // !__BSP_ICM20608_H

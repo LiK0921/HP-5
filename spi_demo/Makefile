@@ -28,7 +28,8 @@ INCDIRS	:= 	imx6ul	\
 			bsp/spi     \
 			bsp/icm20608 \
 			stdio/include \
-			bsp/delay
+			bsp/delay	\
+			
 
 SRCDIRS := 	project	\
 			bsp/clk \
@@ -48,7 +49,8 @@ SRCDIRS := 	project	\
 			bsp/spi     \
 			bsp/icm20608 \
 			stdio/lib \
-			bsp/delay
+			bsp/delay\
+			imx6ul
 
 #patsubst是一个函数，搜索并替换字符串
 INCLUDE := 	$(patsubst %, -I %, $(INCDIRS))

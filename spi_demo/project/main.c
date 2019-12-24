@@ -72,12 +72,12 @@ int main(void)
     //设置时间
     //rtc_setdatetime(&rtc_structure);
 */
-    //iic
+    //iic//////////////////////////////////////////////////////////////////////////////////////////////
     lcd_show_string(20, 10, 260, 32, 32,(char*)"IIC ADN SPI DEMO~");
     lcd_show_string(20, 100, 70, 24, 24,(char*)"IR :");
     lcd_show_string(20, 130, 70, 24, 24,(char*)"PS :");
     lcd_show_string(20, 160, 70, 24, 24,(char*)"ALS:");
-    //spi
+    //spi//////////////////////////////////////////////////////////////////////////////////////////////
     lcd_show_string(50, 230, 200, 16, 16, (char*)"accel x:");  
 	lcd_show_string(50, 250, 200, 16, 16, (char*)"accel y:");  
 	lcd_show_string(50, 270, 200, 16, 16, (char*)"accel z:");  
@@ -96,17 +96,17 @@ int main(void)
 
     while (1)
     {
+        //////////////////////////////////////////////////////////////////////////////////////////////
         ap3216c_read_data(&ir, &ps, &als);
         lcd_shownum(100, 100, ir, 5, 24);
         lcd_shownum(100, 130, ps, 5, 24);
         lcd_shownum(100, 160, als, 5, 24);
-
-
+        //////////////////////////////////////////////////////////////////////////////////////////////
         rtc_getdatetime(&rtc_structure);
         sprintf(buf, "%4d/%2d/%2d %2d:%2d:%2d",rtc_structure.year, rtc_structure.month, rtc_structure.day,
                                         rtc_structure.hour, rtc_structure.minute, rtc_structure.second);
         lcd_show_string(20, 70, 450, 32, 32,(char*)buf);
-
+        //////////////////////////////////////////////////////////////////////////////////////////////
         icm20608_getdata();
 
         integer_display(50 + 70, 230, 16, icm20608_structure.accel_x_adc);
@@ -124,8 +124,8 @@ int main(void)
 		decimals_display(50 + 70 + 50, 310, 16, icm20608_structure.gyro_y_act);
 		decimals_display(50 + 70 + 50, 330, 16, icm20608_structure.gyro_z_act);
 		decimals_display(50 + 70 + 50, 350, 16, icm20608_structure.temp_act);
-
-        gpt_delay_ms(120);
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        gpt_delay_ms(110);
     }
     return 0;
 }

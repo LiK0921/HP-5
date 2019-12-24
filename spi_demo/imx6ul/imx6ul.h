@@ -7,6 +7,7 @@
 #include "fsl_iomuxc.h"
 #include "core_ca7.h"
 
-
+//开启浮点运算单元
+void imx6ul_hardfpu_enable(void);
 
 #endif // !__IMX6UL_H
