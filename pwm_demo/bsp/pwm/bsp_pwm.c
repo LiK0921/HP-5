@@ -25,12 +25,12 @@ void pwm_init(PWM_Type * base, u32 hz)
     {     
         pwm_set_duty(PWM1, tft_lcd_struct.backlight_pwm);
     }
-
+    
     //将PWM1中断注册进去
     sys_register_irqhandle(PWM1_IRQn, (system_irq_handler_t)pwm1_irqhandle, NULL);
-    
     //使能指定的中断
-    GIC_EnableIRQ(PWM1_IRQn);//一定要在注册函数的下面！！否则程序就卡死！！
+    GIC_EnableIRQ(PWM1_IRQn);//一定要在注册函数的下面！！否则程序就卡死！！当我没说～
+    
 #endif
 
     //FIFO为空时将产生中断
@@ -41,12 +41,15 @@ void pwm_init(PWM_Type * base, u32 hz)
     pwm_enable(base);
 }
 
+//u8 test_count = 0;
+
 #if PWM1_ENABLE   
-//内部不可加而外的东西，否则不执行中断服务函数！！！
+//内部不可加而外的东西，否则不执行中断服务函数！！！当我没说～，可能不能加printf()这种阻塞型函数
 void pwm1_irqhandle(u32 giccIar, void * user_param)
 {
     if (PWM1->PWMSR & (1 << 3))//FIFO低于"水位线"
     {  
+        //test_count++;
         pwm_set_duty(PWM1, tft_lcd_struct.backlight_pwm);
         PWM1->PWMSR |= (1 << 3);//写1清除中断标志位
     }

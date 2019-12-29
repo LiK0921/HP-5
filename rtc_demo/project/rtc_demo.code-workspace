@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "/home/likang/Git/HP-5/rtc_demo"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"bsp_rtc.h": "c"
+		}
+	}
+}

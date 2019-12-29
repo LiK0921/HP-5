@@ -17,6 +17,8 @@
 #include "bsp_ft5426.h"
 #include "bsp_pwm.h"
 
+//extern u8 test_count;
+
 int main(void) 
 {
     u8 i = 0, j = 0;
@@ -55,25 +57,24 @@ int main(void)
     //icm20608初始化
     icm20608_init();
     //ft5426触摸屏初始化
-    //ft5426_init();
+    //ft5426_init();//一用触摸屏，中断之后,PWM的中断就不会再执行了！
     //PWM1初始化，控制LCD的背光亮度
     pwm_init(PWM1, 1000);//1000Hz的控制频率
    
     
     tft_lcd_struct.forecolor = LCD_BLACK;
     tft_lcd_struct.backcolor = LCD_ORANGE;
-/*
-    rtc_structure.year = 2019;
+/*    rtc_structure.year = 2019;
     rtc_structure.month = 12;
-    rtc_structure.day = 22;
-    rtc_structure.hour = 22;
-    rtc_structure.minute = 37;
+    rtc_structure.day = 29;
+    rtc_structure.hour = 10;
+    rtc_structure.minute = 34;
     rtc_structure.second = 0;
     //设置时间
-    //rtc_setdatetime(&rtc_structure);
+    rtc_setdatetime(&rtc_structure);
 */
     //iic ap3216cs//////////////////////////////////////////////////////////////////////////////////////////////
-    lcd_show_string(20, 10, 260, 32, 32,(char*)"IIC TOUCH DEMO~");
+    lcd_show_string(20, 10, 260, 32, 32,(char*)"PWM DEMO~");
     lcd_show_string(20, 100, 70, 24, 24,(char*)"IR :");
     lcd_show_string(20, 130, 70, 24, 24,(char*)"PS :");
     lcd_show_string(20, 160, 70, 24, 24,(char*)"ALS:");
@@ -115,6 +116,7 @@ int main(void)
         if (j == 0)//600ms到,考虑到循环里面其它函数的耗时可能有400ms了～
         {            
             lcd_shownum(800, 160, tft_lcd_struct.backlight_pwm, 4, 24); 
+            //lcd_shownum(800, 260, test_count, 4, 24);//测试正确
             //////////////////////////////////////////////////////////////////////////////////////////////      
             rtc_getdatetime(&rtc_structure);//获取时间，一秒获取一次
             sprintf(buf, "%4d/%2d/%2d %2d:%2d:%2d",rtc_structure.year, rtc_structure.month, rtc_structure.day,
@@ -161,7 +163,7 @@ int main(void)
 		lcd_shownum(500 + 72, 290, ft5426_struct.x[4], 5, 16);
 		lcd_shownum(500 + 72, 310, ft5426_struct.y[4], 5, 16); 
 
-        //lcd_draw_bigpoint(ft5426_struct.x[0], ft5426_struct.y[0], LCD_BLUE);//画四个点跟着手指动  
+        lcd_draw_bigpoint(ft5426_struct.x[0], ft5426_struct.y[0], LCD_BLUE);//画四个点跟着手指动  
         */        
         //////////////////////////////////////////////////////////////////////////////////////////////
         gpt_delay_ms(GPT1, 100);    
