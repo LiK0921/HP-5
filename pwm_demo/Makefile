@@ -57,7 +57,7 @@ SRCDIRS := 	project	\
 			imx6ul
 
 #patsubst是一个函数，搜索并替换字符串
-INCLUDE := 	$(patsubst %, -I %, $(INCDIRS))
+INCLUDE := 	$(patsubst %, -I %, $(INCDIRS)) 
 
 #wildcard是通配符函数
 SFILES	:=	$(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.s))
@@ -85,7 +85,11 @@ $(SOBJS) : obj/%.o : %.s
 	$(CC) -Wall -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
 
 $(COBJS) : obj/%.o : %.c
-	$(CC) -Wall -lm -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -Wa,-mimplicit-it=thumb -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
+	$(CC) -Wall -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -Wa,-mimplicit-it=thumb -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
+
+#	$(CC) -Wall -lm -L /lib -L /usr/lib -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -Wa,-mimplicit-it=thumb -nostdlib -fno-builtin -c -O2  $(INCLUDE) -o $@ $<
+
+
 .PHONY : clean
 
 clean :

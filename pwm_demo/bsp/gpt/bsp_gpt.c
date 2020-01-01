@@ -31,6 +31,8 @@ void gpt_init(GPT_Type * base, u32 irq_ms)
     */
     base->OCR[0] = 0xffffffff;//比较值设置
     
+    if (base == GPT2)
+    {
 #if GPT1_IRQ_DISABLE
     /*
     * GPT 的 PR 寄存器，GPT 的分频设置
@@ -44,18 +46,19 @@ void gpt_init(GPT_Type * base, u32 irq_ms)
     GIC_EnableIRQ(GPT1_IRQn);
     sys_register_irqhandle(GPT1_IRQn, (system_irq_handler_t)gpt1_irqhandle, NULL);
 #endif
-
-#if (GPT2_IRQ_ENABLE)
-    if (base == GPT2)
+    }
+    else if (base == GPT2)
     {
+#if (GPT2_IRQ_ENABLE)
+    
         /*
         * GPT 的 PR 寄存器，GPT 的分频设置
         * bit11:0 设置分频值，设置为 0 表示 1 分频，
         * 以此类推，最大可以设置为 0XFFF，也就是最大 4096 分频
         */
-        GPT2->PR = 66 - 1;//分频系数设置
-        GPT2->OCR[0] = irq_ms * 1000;//比较值设置，计时500ms就进入中断
-        GPT2->IR |= 1 << 0;//使能该定时器的通道１的比较中断
+        base->PR = 66 - 1;//分频系数设置
+        base->OCR[0] = irq_ms * 1000;//比较值设置，计时500ms就进入中断
+        base->IR |= 1 << 0;//使能该定时器的通道１的比较中断
 
         //先注册！！
         sys_register_irqhandle(GPT2_IRQn, (system_irq_handler_t)gpt2_irqhandle, NULL);

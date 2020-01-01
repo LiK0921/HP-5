@@ -18,13 +18,19 @@
 #include "bsp_pwm.h"
 
 //extern u8 test_count;
+//#include <math.h>
 
 int main(void) 
 {
-    u8 i = 0, j = 0;
+    //u8 i = 0, j = 0;
     u16 ir, ps, als;
     RTC_Struct rtc_structure;
     char buf[160]; 
+    static u8 state = OFF;
+
+    //float f = sinf(3.14f / 2.0f);
+    //f += 0.01f;
+
     memset(buf, 0, sizeof(buf));
     
     //开启硬件浮点运算及ENON
@@ -43,6 +49,7 @@ int main(void)
     exit_init();
     //定时器初始化
     epit_init(EPIT1, 0, 66000000 / 100);//1秒分成100份，就是10ms溢出	
+    epit_init(EPIT2, 0, 66000000 / 1000);//1秒分成1000份，就是1ms溢出	
     //定时器初始化
     gpt_init(GPT1, 500);//高精度延时
     gpt_init(GPT2, 500);//LED高精度闪烁
@@ -110,46 +117,54 @@ int main(void)
     */
     while (1)
     {
-        i++, j++;
-        i %= 2;
-        j %= 6;
-        if (j == 0)//600ms到,考虑到循环里面其它函数的耗时可能有400ms了～
-        {            
+        if (epit_500ms >= 500)//500ms到
+        {
+            epit_500ms = 0;
+            state = !state;
+            led_switch(LED0, state); 
+
             lcd_shownum(800, 160, tft_lcd_struct.backlight_pwm, 4, 24); 
             //lcd_shownum(800, 260, test_count, 4, 24);//测试正确
             //////////////////////////////////////////////////////////////////////////////////////////////      
+            //考虑到循环里面其它函数的耗时可能有500ms了～
             rtc_getdatetime(&rtc_structure);//获取时间，一秒获取一次
             sprintf(buf, "%4d/%2d/%2d %2d:%2d:%2d",rtc_structure.year, rtc_structure.month, rtc_structure.day,
                                         rtc_structure.hour, rtc_structure.minute, rtc_structure.second);
             lcd_show_string(20, 70, 450, 32, 32,(char*)buf);//显示时间
         }   
         //////////////////////////////////////////////////////////////////////////////////////////////
-        //200ms读取一次光强传感器的数据，因为iic传输比较慢    
-        if (i == 0)
+        //150ms读取一次光强传感器的数据，因为iic传输比较慢    
+        if (epit_150ms >= 150)
         {
+            epit_150ms = 0;
             ap3216c_read_data(&ir, &ps, &als);
             lcd_shownum(100, 100, ir, 5, 24);//显示红外，接近距离，光强度
             lcd_shownum(100, 130, ps, 5, 24);
             lcd_shownum(100, 160, als, 5, 24);  
         } 
         //////////////////////////////////////////////////////////////////////////////////////////////
-        icm20608_getdata();
-        //显示ADC的值
-        integer_display(50 + 70, 230, 16, icm20608_structure.accel_x_adc);
-		integer_display(50 + 70, 250, 16, icm20608_structure.accel_y_adc);
-		integer_display(50 + 70, 270, 16, icm20608_structure.accel_z_adc);
-		integer_display(50 + 70, 290, 16, icm20608_structure.gyro_x_adc);
-		integer_display(50 + 70, 310, 16, icm20608_structure.gyro_y_adc);
-		integer_display(50 + 70, 330, 16, icm20608_structure.gyro_z_adc);
-		integer_display(50 + 70, 350, 16, icm20608_structure.temp_adc);
-        //显示量程转换的实际值
-		decimals_display(50 + 70 + 50, 230, 16, icm20608_structure.accel_x_act);
-		decimals_display(50 + 70 + 50, 250, 16, icm20608_structure.accel_y_act);
-		decimals_display(50 + 70 + 50, 270, 16, icm20608_structure.accel_z_act);
-		decimals_display(50 + 70 + 50, 290, 16, icm20608_structure.gyro_x_act);
-		decimals_display(50 + 70 + 50, 310, 16, icm20608_structure.gyro_y_act);
-		decimals_display(50 + 70 + 50, 330, 16, icm20608_structure.gyro_z_act);
-		decimals_display(50 + 70 + 50, 350, 16, icm20608_structure.temp_act);
+        if (epit_100ms >= 100)
+        {
+            epit_100ms = 0;
+            icm20608_getdata();//100ms获取一次
+            //显示ADC的值
+            integer_display(50 + 70, 230, 16, icm20608_structure.accel_x_adc);
+            integer_display(50 + 70, 250, 16, icm20608_structure.accel_y_adc);
+            integer_display(50 + 70, 270, 16, icm20608_structure.accel_z_adc);
+            integer_display(50 + 70, 290, 16, icm20608_structure.gyro_x_adc);
+            integer_display(50 + 70, 310, 16, icm20608_structure.gyro_y_adc);
+            integer_display(50 + 70, 330, 16, icm20608_structure.gyro_z_adc);
+            integer_display(50 + 70, 350, 16, icm20608_structure.temp_adc);
+            //显示量程转换的实际值
+            decimals_display(50 + 70 + 50, 230, 16, icm20608_structure.accel_x_act);
+            decimals_display(50 + 70 + 50, 250, 16, icm20608_structure.accel_y_act);
+            decimals_display(50 + 70 + 50, 270, 16, icm20608_structure.accel_z_act);
+            decimals_display(50 + 70 + 50, 290, 16, icm20608_structure.gyro_x_act);
+            decimals_display(50 + 70 + 50, 310, 16, icm20608_structure.gyro_y_act);
+            decimals_display(50 + 70 + 50, 330, 16, icm20608_structure.gyro_z_act);
+            decimals_display(50 + 70 + 50, 350, 16, icm20608_structure.temp_act);
+        }
+        
         //////////////////////////////////////////////////////////////////////////////////////////////
         /*lcd_shownum(500 + 72, 110, ft5426_struct.point_num , 1, 16);//显示触摸点的个数
 		lcd_shownum(500 + 72, 130, ft5426_struct.x[0], 5, 16);
@@ -166,7 +181,7 @@ int main(void)
         lcd_draw_bigpoint(ft5426_struct.x[0], ft5426_struct.y[0], LCD_BLUE);//画四个点跟着手指动  
         */        
         //////////////////////////////////////////////////////////////////////////////////////////////
-        gpt_delay_ms(GPT1, 100);    
+        //gpt_delay_ms(GPT1, 100);     
     }
     return 0;
 }

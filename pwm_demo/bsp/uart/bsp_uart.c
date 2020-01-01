@@ -78,6 +78,55 @@ void uart_io_init(UART_Type *base)
         IOMUXC_SetPinConfig(IOMUXC_UART1_TX_DATA_UART1_TX, 0x10B0);
         IOMUXC_SetPinConfig(IOMUXC_UART1_RX_DATA_UART1_RX, 0x10B0);
     }	
+    else if (base == UART2)
+    {
+        IOMUXC_SetPinMux(IOMUXC_UART2_TX_DATA_UART2_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_UART2_RX_DATA_UART2_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_UART2_TX_DATA_UART2_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_UART2_RX_DATA_UART2_RX, 0x10B0);//电气属性
+    }
+    else if (base == UART3)
+    {
+        IOMUXC_SetPinMux(IOMUXC_UART3_TX_DATA_UART3_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_UART3_RX_DATA_UART3_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_UART3_TX_DATA_UART3_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_UART3_RX_DATA_UART3_RX, 0x10B0);//电气属性
+    }
+    else if (base == UART4)
+    {
+        IOMUXC_SetPinMux(IOMUXC_UART4_TX_DATA_UART4_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_UART4_RX_DATA_UART4_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_UART4_TX_DATA_UART4_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_UART4_RX_DATA_UART4_RX, 0x10B0);//电气属性
+    }
+    else if (base == UART5)
+    {
+        IOMUXC_SetPinMux(IOMUXC_UART5_TX_DATA_UART5_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_UART5_RX_DATA_UART5_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_UART5_TX_DATA_UART5_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_UART5_RX_DATA_UART5_RX, 0x10B0);//电气属性
+    }
+    else if (base == UART6)
+    {
+        IOMUXC_SetPinMux(IOMUXC_ENET2_RX_DATA0_UART6_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_ENET2_RX_DATA0_UART6_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_RX_DATA0_UART6_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_RX_DATA0_UART6_RX, 0x10B0);//电气属性
+    }
+    else if (base == UART7)
+    {
+        IOMUXC_SetPinMux(IOMUXC_ENET2_TX_DATA0_UART7_RX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_ENET2_TX_DATA0_UART7_TX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_TX_DATA0_UART7_RX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_TX_DATA0_UART7_TX, 0x10B0);//电气属性
+    }
+    else if (base == UART8)
+    {
+        IOMUXC_SetPinMux(IOMUXC_ENET2_TX_DATA1_UART8_TX, 0);	/* 复用为UART1_TX */
+	    IOMUXC_SetPinMux(IOMUXC_ENET2_TX_DATA1_UART8_RX, 0);	/* 复用为UART1_RX */
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_TX_DATA1_UART8_TX, 0x10B0);//电气属性
+        IOMUXC_SetPinConfig(IOMUXC_ENET2_TX_DATA1_UART8_RX, 0x10B0);//电气属性
+    }
 }
 
 
@@ -103,8 +152,8 @@ void uart_soft_reset(UART_Type * base)
 }*/
 void putc(u8 c)
 {
-    while(((UART1->USR2 >> 3) &0X01) == 0);/* 等待上一次发送完成 */
-	UART1->UTXD = c & 0XFF; 				/* 发送数据 */
+    while(((Print_Port->USR2 >> 3) &0X01) == 0);/* 等待上一次发送完成 */
+	Print_Port->UTXD = c & 0XFF; 				/* 发送数据 */
 }
 
 /*u8 my_getc(UART_Type * base)
@@ -114,8 +163,8 @@ void putc(u8 c)
 }*/
 u8 getc()
 {
-    while(((UART1->USR2 >> 0) & 0x01) == 0);/* 等待接收完成 */
-	return UART1->URXD;				/* 返回接收到的数据 */
+    while(((Print_Port->USR2 >> 0) & 0x01) == 0);/* 等待接收完成 */
+	return Print_Port->URXD;				/* 返回接收到的数据 */
 }
 
 void puts(char * str)

@@ -2,6 +2,8 @@
 #define __BSP_UART_H
 #include "imx6ul.h"
 
+//库函数标准输出端口选择
+#define Print_Port  (UART1)
 
 void uart_init(UART_Type * base, u32 broud);
 void uart_io_init(UART_Type *base);

@@ -15,6 +15,8 @@ void pwm_init(PWM_Type * base, u32 hz)
     //设置周期
     pwm_set_period(base, hz);
 
+    if (base == PWM1)
+    {
 #if PWM1_ENABLE
     //初始化为复用pwm1
     IOMUXC_SetPinMux(IOMUXC_GPIO1_IO08_PWM1_OUT, 0);
@@ -32,12 +34,13 @@ void pwm_init(PWM_Type * base, u32 hz)
     GIC_EnableIRQ(PWM1_IRQn);//一定要在注册函数的下面！！否则程序就卡死！！当我没说～
     
 #endif
-
+    }
+    
     //FIFO为空时将产生中断
     pwm_fifo_int_enable(base);
     //一般将状态寄存器清零,写1清零
     base->PWMSR = 0xff;
-    //使能PWM1输出
+    //使能PWM输出
     pwm_enable(base);
 }
 
